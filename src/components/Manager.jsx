@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Invisible from "../assets/Invisible.png";
 import View from "../assets/View.png";
+import PasswordTable from "./PasswordTable";
 
 export const Manager = () => {
   const [toggleEye, setToggleEye] = useState(View);
@@ -121,7 +122,16 @@ export const Manager = () => {
             />
           </button>
         </div>
+        <div className=" container mt-14 w-full">
+          <h2 className="mb-4 font-light text-xl">Your Passwords</h2>
+          {savedData.length === 0 && <div>No passwords to show
+          <p>Click "Add password" to add one</p></div>}
+        {savedData.length != 0 && <PasswordTable savedData = {savedData}></PasswordTable>}
+        
+        </div>
       </div>
+      
+     
     </>
   );
 };
