@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState , useRef} from "react";
 import Invisible from "../assets/Invisible.png";
 import View from "../assets/View.png";
 import PasswordTable from "./PasswordTable";
 
 export const Manager = () => {
   const [toggleEye, setToggleEye] = useState(View);
+  const [toggleType , setToggletype] = useState("password");
+
 
   // here this state is used to handle the form data.
   // always use this approach which provides a clean coding and development experience.
@@ -35,13 +37,25 @@ export const Manager = () => {
 
   // when we submit the form we push the form data into the already exisiting data of savedData variable.
   // also we change the values of form data so that we can enter new values for next password.
+
   const handleSubmit = () =>{
-    setSavedData([...savedData , formData]);
-    setFormData({
-      site: "",
-      username: "",
-      password: "",
-    })
+    if(formData.site === ''  ||formData.username === '' || formData.password === ''){
+      setSavedData([...savedData]);
+      alert("Add required fields");
+    }
+    else{
+      setSavedData([...savedData , formData]);
+      setFormData({
+        site: "",
+        username: "",
+        password: "",
+      })
+    }
+  }
+
+  const handleCopy = (value) =>{
+      navigator.clipboard.writeText(value);
+
   }
 
     // whenever we change the value of savedData then use effect is called to store the data into the local storage.
@@ -54,8 +68,10 @@ export const Manager = () => {
   const handleToggleEye = () => {
     if (toggleEye === View) {
       setToggleEye(Invisible);
+      setToggletype("text");
     } else {
       setToggleEye(View);
+      setToggletype("password");
     }
   };
   
@@ -80,6 +96,7 @@ export const Manager = () => {
             placeholder="Enter website url"
             onChange={handleInputChange}
             name="site"
+            required
           />
           <div className=" flex gap-8">
             <input
@@ -89,16 +106,18 @@ export const Manager = () => {
               placeholder="Enter username"
               onChange={handleInputChange}
               name="username"
+              required
             />
 
             <div className="relative">
               <input
+                type = {toggleType}
                 value={formData.password}
                 className=" border-2 border-slate-300 rounded-lg w-full px-1 py-1 focus:border-gray-500 outline-none"
-                type="text"
                 placeholder="Enter password"
                 onChange={handleInputChange}
                 name="password"
+                required
               />
 
               <span className="absolute  right-[0.5rem] top-[0.5rem] ">
@@ -113,20 +132,21 @@ export const Manager = () => {
           </div>
           <button
             onClick={handleSubmit}
-            className="flex justify-center w-fit  rounded-full items-center px-1 py-2"
+            className="flex justify-center w-fit  rounded-full items-center px-3 py-2 border-2 border-neutral-50 bg-[#8277b9] bg-opacity-60 "
           >
             <lord-icon
               src="https://cdn.lordicon.com/jgnvfzqg.json"
               trigger="hover"
               style={{ width: "2.5rem", height: "2.3rem" }}
             />
+            <h1 className="font-semibold">Save</h1>
           </button>
         </div>
         <div className=" container mt-14 w-full">
           <h2 className="mb-4 font-light text-xl">Your Passwords</h2>
           {savedData.length === 0 && <div>No passwords to show
-          <p>Click "Add password" to add one</p></div>}
-        {savedData.length != 0 && <PasswordTable savedData = {savedData}></PasswordTable>}
+          <p>Click "Save" to add one</p></div>}
+        {savedData.length != 0 && <PasswordTable savedData = {savedData} handleCopy = {handleCopy}  />}
         
         </div>
       </div>
