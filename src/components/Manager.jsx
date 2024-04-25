@@ -60,7 +60,7 @@ export const Manager = () => {
 
   const handleCopy = (value) => {
     toast.success('Copied to clipboard', {
-      position: "bottom-right",
+      position: "top-right",
       autoClose: 2000,
       hideProgressBar: false,
       closeOnClick: true,
@@ -175,7 +175,7 @@ export const Manager = () => {
           {savedData.length === 0 && (
             <div>
               No passwords to show
-              <p>Click "Save" to add one</p>
+              <p className="my-2">Click  <span className="border-2 border-neutral-50 bg-[#8277b9] bg-opacity-60 rounded-full items-center px-3 py-2 font-semibold">Save</span> to add one</p>
             </div>
           )}
           {savedData.length != 0 && (
