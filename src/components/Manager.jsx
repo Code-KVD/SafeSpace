@@ -1,12 +1,14 @@
-import React, { useEffect, useState , useRef} from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { ToastContainer, toast } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.css";
 import Invisible from "../assets/Invisible.png";
 import View from "../assets/View.png";
 import PasswordTable from "./PasswordTable";
 
 export const Manager = () => {
   const [toggleEye, setToggleEye] = useState(View);
-  const [toggleType , setToggletype] = useState("password");
-
+  const [toggleType, setToggletype] = useState("password");
 
   // here this state is used to handle the form data.
   // always use this approach which provides a clean coding and development experience.
@@ -38,32 +40,43 @@ export const Manager = () => {
   // when we submit the form we push the form data into the already exisiting data of savedData variable.
   // also we change the values of form data so that we can enter new values for next password.
 
-  const handleSubmit = () =>{
-    if(formData.site === ''  ||formData.username === '' || formData.password === ''){
+  const handleSubmit = () => {
+    if (
+      formData.site === "" ||
+      formData.username === "" ||
+      formData.password === ""
+    ) {
       setSavedData([...savedData]);
       alert("Add required fields");
-    }
-    else{
-      setSavedData([...savedData , formData]);
+    } else {
+      setSavedData([...savedData, formData]);
       setFormData({
         site: "",
         username: "",
         password: "",
-      })
+      });
     }
-  }
+  };
 
-  const handleCopy = (value) =>{
-      navigator.clipboard.writeText(value);
+  const handleCopy = (value) => {
+    toast.success('Copied to clipboard', {
+      position: "bottom-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+      });
+    navigator.clipboard.writeText(value);
+  };
 
-  }
+  // whenever we change the value of savedData then use effect is called to store the data into the local storage.
+  useEffect(() => {
+    localStorage.setItem("password", JSON.stringify(savedData));
+  }, [savedData]);
 
-    // whenever we change the value of savedData then use effect is called to store the data into the local storage.
-    useEffect(() => {
-      localStorage.setItem("password" , JSON.stringify(savedData));
-    
-    }, [savedData])
-  
   // This function is used to handle the eye of the password field.
   const handleToggleEye = () => {
     if (toggleEye === View) {
@@ -74,7 +87,7 @@ export const Manager = () => {
       setToggletype("password");
     }
   };
-  
+
   // this is the basic approach to handle the input field in any react application.
   // always use this approach only.
   const handleInputChange = (e) => {
@@ -82,6 +95,21 @@ export const Manager = () => {
   };
   return (
     <>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition="Bounce"
+      />
+      {/* Same as */}
+      <ToastContainer />
       <div className="absolute top-0 z-[-2] h-screen w-screen bg-white bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
 
       <div className="container my-20 mx-auto h-72 border-2 w-1/2 flex flex-col items-center bg-gray-100 rounded-xl">
@@ -111,7 +139,7 @@ export const Manager = () => {
 
             <div className="relative">
               <input
-                type = {toggleType}
+                type={toggleType}
                 value={formData.password}
                 className=" border-2 border-slate-300 rounded-lg w-full px-1 py-1 focus:border-gray-500 outline-none"
                 placeholder="Enter password"
@@ -144,14 +172,17 @@ export const Manager = () => {
         </div>
         <div className=" container mt-14 w-full">
           <h2 className="mb-4 font-light text-xl">Your Passwords</h2>
-          {savedData.length === 0 && <div>No passwords to show
-          <p>Click "Save" to add one</p></div>}
-        {savedData.length != 0 && <PasswordTable savedData = {savedData} handleCopy = {handleCopy}  />}
-        
+          {savedData.length === 0 && (
+            <div>
+              No passwords to show
+              <p>Click "Save" to add one</p>
+            </div>
+          )}
+          {savedData.length != 0 && (
+            <PasswordTable savedData={savedData} handleCopy={handleCopy} />
+          )}
         </div>
       </div>
-      
-     
     </>
   );
 };
