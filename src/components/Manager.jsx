@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState} from "react";
 import { ToastContainer, toast } from "react-toastify";
-
 import "react-toastify/dist/ReactToastify.css";
+import { v4 as uuidv4 } from "uuid";
 import Invisible from "../assets/Invisible.png";
 import View from "../assets/View.png";
 import PasswordTable from "./PasswordTable";
@@ -9,7 +9,6 @@ import PasswordTable from "./PasswordTable";
 export const Manager = () => {
   const [toggleEye, setToggleEye] = useState(View);
   const [toggleType, setToggletype] = useState("password");
-
   // here this state is used to handle the form data.
   // always use this approach which provides a clean coding and development experience.
   // here the state is in the form of an object.
@@ -49,17 +48,28 @@ export const Manager = () => {
       setSavedData([...savedData]);
       alert("Add required fields");
     } else {
-      setSavedData([...savedData, formData]);
+      setSavedData([...savedData, { ...formData, id: uuidv4() }]);
       setFormData({
         site: "",
         username: "",
         password: "",
       });
+      toast.success("Saved Succesfully", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
     }
   };
 
   const handleCopy = (value) => {
-    toast.success('Copied to clipboard', {
+    navigator.clipboard.writeText(value);
+    toast.success("Copied to clipboard", {
       position: "top-right",
       autoClose: 2000,
       hideProgressBar: false,
@@ -68,8 +78,7 @@ export const Manager = () => {
       draggable: true,
       progress: undefined,
       theme: "dark",
-      });
-    navigator.clipboard.writeText(value);
+    });
   };
 
   // whenever we change the value of savedData then use effect is called to store the data into the local storage.
@@ -93,20 +102,40 @@ export const Manager = () => {
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  const handleEdit = (id) => {
+    setFormData(savedData.filter((items) => items.id === id)[0]);
+    setSavedData(savedData.filter((items) => items.id !== id));
+  };
+
+  // deleting a password entry from the table/list.
+  const handleDelete = async (id) => {
+    setSavedData(prevSavedData => prevSavedData.filter(item => item.id !== id));
+
+    toast.success("Deleted Successfully", {  
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
+  };
   return (
     <>
       <ToastContainer
         position="top-right"
-        autoClose={5000}
+        autoClose={2000}
         hideProgressBar={false}
         newestOnTop={false}
-        closeOnClick
+        closeOnClick={false}
         rtl={false}
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="light"
-        transition="Bounce"
+        theme="dark"
       />
       {/* Same as */}
       <ToastContainer />
@@ -175,11 +204,22 @@ export const Manager = () => {
           {savedData.length === 0 && (
             <div>
               No passwords to show
-              <p className="my-2">Click  <span className="border-2 border-neutral-50 bg-[#8277b9] bg-opacity-60 rounded-full items-center px-3 py-2 font-semibold">Save</span> to add one</p>
+              <p className="my-2">
+                Click{" "}
+                <span className="border-2 border-neutral-50 bg-[#8277b9] bg-opacity-60 rounded-full items-center px-3 py-2 font-semibold">
+                  Save
+                </span>{" "}
+                to add one
+              </p>
             </div>
           )}
           {savedData.length != 0 && (
-            <PasswordTable savedData={savedData} handleCopy={handleCopy} />
+            <PasswordTable
+              savedData={savedData}
+              handleCopy={handleCopy}
+              handleDelete={handleDelete}
+              handleEdit={handleEdit}
+            />
           )}
         </div>
       </div>
