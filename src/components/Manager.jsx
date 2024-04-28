@@ -54,16 +54,6 @@ export const Manager = () => {
         username: "",
         password: "",
       });
-      toast.success("Saved Succesfully", {
-        position: "top-right",
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
     }
   };
 
@@ -111,17 +101,6 @@ export const Manager = () => {
   // deleting a password entry from the table/list.
   const handleDelete = async (id) => {
     setSavedData(prevSavedData => prevSavedData.filter(item => item.id !== id));
-
-    toast.success("Deleted Successfully", {  
-      position: "top-right",
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: false,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "dark",
-    });
   };
   return (
     <>
